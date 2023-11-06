@@ -10,6 +10,8 @@ export default function Home() {
   const [description, setDescription] = useState('');
   const [searchTitle, setSearchTitle] = useState<string>('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [allVideos, setAllVideos] = useState<any[]>([]);
+
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,6 +43,15 @@ export default function Home() {
       console.log("fetch video successfully");
     } catch (error) {
       console.error('Error fetching video:', error);
+    }
+  };
+
+  const handleGetAllVideos = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/videos/allVideos');
+      setAllVideos(response.data);
+    } catch (error) {
+      console.error('Error fetching all videos:', error);
     }
   };
 
@@ -100,6 +111,23 @@ export default function Home() {
             </video>
           </div>
         ))}
+      </section>
+      <section>
+        <button onClick={handleGetAllVideos}>Get All Videos</button>
+        <div className={styles.videoGrid}>
+          {allVideos.map((video, index) => (
+            <div key={index} className={styles.videoCard}>
+              <video controls width="320" height="180">
+                <source src={video.url} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div>
+                <h3>{video.title}</h3>
+                <p>{video.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     </main>
   );
